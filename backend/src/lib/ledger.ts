@@ -247,3 +247,4 @@ export async function getTransactionProof(prisma: PrismaClient, transactionId: s
     isProvable: entriesWithProofs.every(e => e.isCryptographicallyValid)
   };
 }
+

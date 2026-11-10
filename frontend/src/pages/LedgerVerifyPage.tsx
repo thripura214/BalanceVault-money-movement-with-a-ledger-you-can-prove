@@ -271,3 +271,4 @@ export const LedgerVerifyPage: React.FC<LedgerVerifyPageProps> = ({ initialTxId 
     </div>
   );
 };
+

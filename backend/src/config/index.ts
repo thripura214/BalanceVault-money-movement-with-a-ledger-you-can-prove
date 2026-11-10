@@ -11,3 +11,4 @@ export const config = {
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '1d',
   bootstrapSecret: process.env.BOOTSTRAP_SECRET || 'balancevault-secure-bootstrap-key-2026'
 };
+

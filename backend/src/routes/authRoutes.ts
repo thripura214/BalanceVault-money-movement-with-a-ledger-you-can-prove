@@ -18,3 +18,4 @@ router.post('/login', strictAuthLimiter, login);
 router.get('/me', requireAuth, getProfile);
 
 export default router;
+

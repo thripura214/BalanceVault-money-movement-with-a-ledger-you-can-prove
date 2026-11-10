@@ -177,3 +177,4 @@ export const AdminBootstrapPage: React.FC<AdminBootstrapPageProps> = ({ onBackTo
     </div>
   );
 };
+

@@ -22,3 +22,4 @@ router.patch('/users/:userId/role', requireRole([UserRole.ADMIN]), updateUserRol
 router.get('/audit-logs', getAuditLogs);
 
 export default router;
+

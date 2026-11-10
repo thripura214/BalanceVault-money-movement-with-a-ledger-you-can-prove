@@ -226,3 +226,4 @@ export async function getSystemMetrics(req: AuthRequest, res: Response) {
     return res.status(500).json({ error: 'Failed to calculate system metrics' });
   }
 }
+

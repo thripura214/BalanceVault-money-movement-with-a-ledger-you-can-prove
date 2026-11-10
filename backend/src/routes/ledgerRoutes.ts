@@ -15,3 +15,4 @@ router.get('/entries', getRecentLedgerEntries);
 router.get('/entry/:entryIndex/verify', verifySingleEntry);
 
 export default router;
+

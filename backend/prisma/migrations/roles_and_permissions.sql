@@ -87,3 +87,4 @@ GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO balancevault_app;
 
 -- Grant read-only to auditor
 GRANT SELECT ON "ledger_entries", "audit_logs", "transactions" TO balancevault_auditor;
+

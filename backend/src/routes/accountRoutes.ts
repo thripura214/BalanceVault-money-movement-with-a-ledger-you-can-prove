@@ -20,3 +20,4 @@ router.post('/transfer', strictAuthLimiter, transferFunds);
 router.get('/:accountId/transactions', getAccountTransactions);
 
 export default router;
+

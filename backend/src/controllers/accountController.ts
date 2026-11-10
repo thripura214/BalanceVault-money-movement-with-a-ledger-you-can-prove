@@ -352,3 +352,4 @@ export async function getAccountTransactions(req: AuthRequest, res: Response) {
     return res.status(500).json({ error: 'Failed to retrieve transaction history' });
   }
 }
+

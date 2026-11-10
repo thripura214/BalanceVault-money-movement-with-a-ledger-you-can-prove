@@ -91,3 +91,4 @@ export async function verifySingleEntry(req: Request, res: Response) {
     return res.status(500).json({ error: 'Failed to verify ledger entry' });
   }
 }
+
