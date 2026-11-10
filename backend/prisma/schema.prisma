@@ -1,0 +1,142 @@
+// BalanceVault Prisma Schema
+// Money Movement with a Ledger You Can Prove
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  ACCOUNT_HOLDER
+  AUDITOR
+}
+
+enum OnboardingStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  SUSPENDED
+}
+
+enum AccountStatus {
+  PENDING_APPROVAL
+  ACTIVE
+  FROZEN
+  CLOSED
+}
+
+enum TransactionType {
+  DEPOSIT
+  WITHDRAWAL
+  TRANSFER
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum LedgerEntryType {
+  DEBIT
+  CREDIT
+}
+
+model User {
+  id               String           @id @default(uuid())
+  email            String           @unique
+  passwordHash     String
+  fullName         String
+  role             UserRole         @default(ACCOUNT_HOLDER)
+  onboardingStatus OnboardingStatus @default(PENDING)
+  kycDocumentUrl   String?
+  phone            String?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  accounts         Account[]
+  auditLogs        AuditLog[]
+
+  @@map("users")
+}
+
+model Account {
+  id            String        @id @default(uuid())
+  accountNumber String        @unique
+  userId        String
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  balance       Float         @default(0.0)
+  currency      String        @default("USD")
+  status        AccountStatus @default(PENDING_APPROVAL)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  sentTransactions     Transaction[] @relation("SentTransactions")
+  receivedTransactions Transaction[] @relation("ReceivedTransactions")
+  ledgerEntries        LedgerEntry[]
+
+  @@map("accounts")
+}
+
+model Transaction {
+  id                 String            @id @default(uuid())
+  reference          String            @unique // Idempotency reference
+  type               TransactionType
+  status             TransactionStatus @default(PENDING)
+  amount             Float
+  fee                Float             @default(0.0)
+  senderAccountId    String?
+  senderAccount      Account?          @relation("SentTransactions", fields: [senderAccountId], references: [id])
+  recipientAccountId String?
+  recipientAccount   Account?          @relation("ReceivedTransactions", fields: [recipientAccountId], references: [id])
+  description        String?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  ledgerEntries      LedgerEntry[]
+
+  @@map("transactions")
+}
+
+model LedgerEntry {
+  id            String          @id @default(uuid())
+  entryIndex    Int             @unique @default(autoincrement())
+  transactionId String
+  transaction   Transaction     @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  accountId     String
+  account       Account         @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  entryType     LedgerEntryType
+  amount        Float
+  balanceBefore Float
+  balanceAfter  Float
+  timestamp     DateTime        @default(now())
+  prevHash      String          // Hash of the prior ledger entry for chaining
+  hash          String          @unique // Cryptographic SHA-256 seal of this entry + prevHash
+
+  @@index([accountId])
+  @@index([transactionId])
+  @@index([entryIndex])
+  @@map("ledger_entries")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action     String   // e.g. AUTH_LOGIN, ADMIN_BOOTSTRAP, ONBOARDING_APPROVE, TRANSFER_EXECUTED
+  targetId   String?  // ID of affected entity
+  details    String?  // JSON formatted details or description
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
