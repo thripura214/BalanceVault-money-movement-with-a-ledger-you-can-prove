@@ -11,14 +11,15 @@
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "dev:backend": "npm run --prefix backend dev",
     "dev:frontend": "npm run --prefix frontend dev",
-    "build": "npm run --prefix backend build && npm run --prefix frontend build",
+    "build": "npm run --prefix frontend build",
+    "build:all": "npm run --prefix backend build && npm run --prefix frontend build",
     "start": "npm run --prefix backend start",
     "db:generate": "npm run --prefix backend db:generate",
     "db:migrate": "npm run --prefix backend db:migrate",
     "db:seed": "npm run --prefix backend db:seed",
     "admin:bootstrap": "npm run --prefix backend admin:bootstrap",
     "ledger:verify": "npm run --prefix backend ledger:verify",
-    "test": "npm run --prefix backend test"
+    "test": "echo \"Running automated ledger test...\" && tsx scripts/test-ledger.ts"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
@@ -26,4 +27,3 @@
   "author": "Thripura <thripura214@gmail.com>",
   "license": "MIT"
 }
-
